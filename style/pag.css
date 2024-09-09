@@ -1,0 +1,34 @@
+body {
+    background-color: #f8f9fa;
+}
+
+h2 {
+    color: #3c4763;
+}
+
+.navbar-brand, .nav-link {
+    color: #ffffff !important;
+}
+
+.table th {
+    background-color: #3c4763;
+    color: white;
+}
+
+.table td {
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: #3c4763;
+    border-color: #3c4763;
+}
+
+.btn-primary:hover {
+    background-color: #2e364d;
+    border-color: #2e364d;
+}
+
+#search-bar {
+    border: 2px solid #3c4763;
+}

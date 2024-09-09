@@ -1,0 +1,36 @@
+body {
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.register-container {
+    background-color: #ffffff;
+    border: 2px solid #3c4763;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+}
+.register-title {
+    color: #3c4763;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.register-title img{
+    width: 30%;
+}
+.form-control {
+    border-color: #3c4763;
+}
+.btn-primary {
+    background-color: #3c4763;
+    border-color: #3c4763;
+}
+.btn-primary:hover {
+    background-color: #2e364d;
+    border-color: #2e364d;
+}
