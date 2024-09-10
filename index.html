@@ -4,45 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Estoque Fácil</title>
-
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="./style/style.css" />
   </head>
   <body>
     <div class="login-container">
-      <div class="login-title"><img src="./style/image/logo.jpg" alt="" /></div>
+      <div class="login-title"><img src="/Estoque-Fácil-Photoroom.png" alt="" /></div>
 
-      <h2 class="login-title">Login</h2>
-
-      <form>
-        <div class="mb-3">
+      <form action="form-login" method="post">
+        <div class="input-label">
+          <label for="coduser" class="form-label">Código Usuário</label>
+          <input type="text" class="form-control" id="coduser">
+        </div>
+        <div class="input-label">
           <label for="username" class="form-label">Usuário</label>
-          <input
-            type="text"
-            class="form-control"
-            id="username"
-            placeholder="Digite seu usuário"
-          />
+          <input type="text" class="form-control" id="username" disabled>
         </div>
-        <div class="mb-3">
+        <div class="input-label">
           <label for="password" class="form-label">Senha</label>
-          <input
-            type="password"
-            class="form-control"
-            id="password"
-            placeholder="Digite sua senha"
-          />
+          <input type="password" class="form-control" id="password">
         </div>
-        <div> <a href="./register.html">registre-se</a></div>
 
-        <button type="submit" class="btn btn-primary w-100"><a href="./pag.html">entrar</a></button>
+        <button type="submit" class="btn-login">Entrar</button>
       </form>
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
