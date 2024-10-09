@@ -8,6 +8,16 @@ h2 {
 
 .navbar-brand, .nav-link {
     color: #ffffff !important;
+    
+}
+
+#navbar-brand-img{
+    width: 15%;
+    border-radius: 30%;
+}
+
+.nav-item{
+    cursor: pointer;
 }
 
 .table th {

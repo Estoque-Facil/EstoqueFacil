@@ -3,25 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Estoque Fácil</title>
+    <title>Estoque Fácil - Login</title>
     <link rel="stylesheet" href="./style/style.css" />
   </head>
   <body>
     <div class="login-container">
-      <div class="login-title"><img src="/Estoque-Fácil-Photoroom.png" alt="" /></div>
+      <div class="login-title">
+        <img src="./style/image/Estoque-Fácil-Photoroom.png" alt="" />
+      </div>
 
       <form action="form-login" method="post">
         <div class="input-label">
           <label for="coduser" class="form-label">ID</label>
-          <input type="text" class="form-control" id="coduser">
+          <input type="text" class="form-control" id="coduser" />
         </div>
         <div class="input-label">
           <label for="username" class="form-label">Usuário</label>
-          <input type="text" class="form-control" id="username" disabled>
+          <input type="text" class="form-control" id="username" disabled />
+        </div>
+
+        <div class="input-label">
+          <label class="form-label" for="empresa">Empresa:</label>
+          <select id="empresa" class="form-control" name="empresa">
+            <option value="matriz">Matriz</option>
+            <option value="filial">Filial</option>
+          </select>
         </div>
         <div class="input-label">
           <label for="password" class="form-label">Senha</label>
-          <input type="password" class="form-control" id="password">
+          <input type="password" class="form-control" id="password" />
         </div>
 
         <button type="submit" class="btn-login">Entrar</button>

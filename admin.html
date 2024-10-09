@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Estoque fácil - admin</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Link para o CSS externo -->
+    <link rel="stylesheet" href="./style/pag.css" />
+  </head>
+
+  <body>
+    <!-- Barra de navegação -->
+    <nav
+      class="navbar navbar-expand-lg navbar-dark"
+      style="background-color: #3c4763"
+    >
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#"
+          ><img
+            id="navbar-brand-img"
+            src="./style/image/Estoque-Fácil.png"
+            alt=""
+        /></a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li>
+              <a class="nav-link" href="./usuario.html">Registro usuário</a>
+            </li>
+            <li>
+              <a class="nav-link" href="./cliente.html">Registro cliente</a>
+            </li>
+            <li>
+              <a class="nav-link" href="./fornecedor.html">Registro fornecedor</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Início</a>
+            </li>
+            <li class="nav-item">
+              <div class="nav-link" onclick="entradasaida()">Entrada/Saída</div>
+            </li>
+            <li>
+              <a class="nav-link" href="#"></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <div class="container my-5">
+      <h2 class="text-center mb-4">Gerenciador de Estoque</h2>
+
+      <!-- Barra de busca -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <input
+            type="text"
+            class="form-control"
+            id="search-bar"
+            placeholder="Buscar produto..."
+            onkeyup="searchProduct()"
+          />
+        </div>
+      </div>
+
+      <!-- Tabela de produtos -->
+      <table class="table table-bordered table-striped" id="product-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome do Produto</th>
+            <th>Tipo</th>
+            <th>Categoria</th>
+            <th>Matéria prima</th>
+            <th>Quantidade</th>
+            <th>Preço (R$)</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="product-list">
+          <!-- Produtos serão carregados via JS -->
+        </tbody>
+      </table>
+
+      <!-- Botão para adicionar novo produto -->
+      <button class="btn btn-primary" onclick="addProduct()">
+        Adicionar Produto
+      </button>
+    </div>
+
+    <!-- Modal de Adição de Produto -->
+    <div
+      class="modal fade"
+      id="productModal"
+      tabindex="-1"
+      aria-labelledby="productModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="productModalLabel">
+              Adicionar Novo Produto
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <div class="modal-body">
+            <form id="product-form">
+              <div class="mb-3">
+                <label for="product-name" class="form-label"
+                  >Nome do Produto</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="product-name"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="product-type" class="form-label"
+                  >Tipo do Produto</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="product-type"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="product-category" class="form-label"
+                  >Categoria do Produto</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="product-category"
+                  required
+                />
+              </div>
+
+              <div class="mb-3">
+                <label for="product-matter" class="form-label"
+                  >Matéria prima do Produto</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="product-matter"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="product-quantity" class="form-label"
+                  >Quantidade</label
+                >
+                <input
+                  type="number"
+                  class="form-control"
+                  id="product-quantity"
+                  required
+                />
+              </div>
+
+              <div class="mb-3">
+                <label for="product-price" class="form-label">Preço (R$)</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="product-price"
+                  step="0.01"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-primary">Salvar</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Entrada/Saída -->
+    <div
+      class="modal fade"
+      id="entradaSaidaModal"
+      tabindex="-1"
+      aria-labelledby="entradaSaidaModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="entradaSaidaModalLabel">
+              Registrar Entrada/Saída
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="entrada-saida-form">
+              <!-- Tipo de Operação (Entrada ou Saída) -->
+              <div class="mb-3">
+                <label for="tipo_operacao" class="form-label"
+                  >Tipo de Operação:</label
+                >
+                <select
+                  class="form-select"
+                  id="tipo_operacao"
+                  name="tipo_operacao"
+                  onchange="mostrarCamposEntradaSaida()"
+                >
+                  <option value=""></option>
+                  <option value="entrada">Entrada</option>
+                  <option value="saida">Saída</option>
+                </select>
+              </div>
+
+              <!-- Tipo de Entrada (Fornecimento ou Fabricação) - Somente para Entrada -->
+              <div id="campo_tipo_entrada" class="mb-3" style="display: none">
+                <label for="tipo_entrada" class="form-label"
+                  >Tipo de Entrada:</label
+                >
+                <select
+                  class="form-select"
+                  id="tipo_entrada"
+                  name="tipo_entrada"
+                  onchange="mostrarCamposEspecificosEntrada()"
+                >
+                  <option value="fornecimento">Fornecimento</option>
+                  <option value="fabricacao">Fabricação</option>
+                </select>
+              </div>
+
+              <!-- Nota Fiscal (Somente para Saída e Fornecimento) -->
+              <div id="campo_nota_fiscal" class="mb-3" style="display: none">
+                <label for="nota_fiscal" class="form-label">Nota Fiscal:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nota_fiscal"
+                  name="nota_fiscal"
+                />
+              </div>
+
+              <!-- Cliente (Somente para Saída e Fabricação) -->
+              <div id="campo_cliente" class="mb-3" style="display: none">
+                <label for="cliente" class="form-label">Cliente:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="cliente"
+                  name="cliente"
+                />
+              </div>
+
+              <!-- Turno (Somente para Fabricação) -->
+              <div id="campo_turno" class="mb-3" style="display: none">
+                <label for="turno" class="form-label">Turno:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="turno"
+                  name="turno"
+                />
+              </div>
+
+              <!-- Campo específico para Entrada (Matéria Prima) -->
+              <div id="campo_materia_prima" class="mb-3" style="display: none">
+                <label for="materia_prima" class="form-label"
+                  >Matéria Prima:</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="materia_prima"
+                  name="materia_prima"
+                />
+              </div>
+
+              <!-- Produto (para ambos) -->
+              <div class="mb-3">
+                <label for="produto" class="form-label">Produto:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="produto"
+                  name="produto"
+                  required
+                />
+              </div>
+
+              <!-- Quantidade (para ambos) -->
+              <div class="mb-3">
+                <label for="quantidade" class="form-label">Quantidade:</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="quantidade"
+                  name="quantidade"
+                  required
+                />
+              </div>
+
+              <!-- Responsável (para ambos) -->
+              <div id="campo_responsavel" class="mb-3">
+                <label for="responsavel" class="form-label">Responsável:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="responsavel"
+                  name="responsavel"
+                  required
+                />
+              </div>
+
+              <!-- Data (para ambos) -->
+              <div class="mb-3">
+                <label for="data_operacao" class="form-label">Data:</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="data_operacao"
+                  name="data_operacao"
+                  required
+                />
+              </div>
+
+              <button type="submit" class="btn btn-primary">
+                Registrar Operação
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS e JS Externo -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./script/script.js"></script>
+  </body>
+</html>
