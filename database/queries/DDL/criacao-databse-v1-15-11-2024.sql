@@ -1,0 +1,8 @@
+CREATE DATABASE DbEstoqueFacil
+ON PRIMARY (
+NAME=DbEstoqueFacil,
+FILENAME='C:\SQLBancos\DbEstoqueFacil.MDF',
+SIZE=6MB,
+MAXSIZE=15MB,
+FILEGROWTH=10%
+)
