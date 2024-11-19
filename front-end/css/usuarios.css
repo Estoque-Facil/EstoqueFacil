@@ -1,0 +1,47 @@
+.navbar-brand, .nav-link {
+    color: #ffffff !important;
+    
+}
+
+#navbar-brand-img{
+    width: 15%;
+    border-radius: 5px;
+}
+
+.nav-item{
+    cursor: pointer;
+}
+
+body {
+    background-color: #f8f9fa;
+    width: 100%;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+}
+
+.col-md-6{
+    display: flex;
+    gap: 5%;
+}
+
+.table th {
+    background-color: #3c4763;
+    color: white;
+}
+
+.table td {
+    text-align: left;
+}
+
+h1{
+    color: #3c4763;
+}
+
+#search-bar {
+    border: 2px solid #3c4763;
+}

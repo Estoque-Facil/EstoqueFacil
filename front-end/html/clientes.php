@@ -24,7 +24,7 @@
         header('Location: ../../front-end/html/home.php');
         exit();
     } catch (Exception $e) {
-        error_log("Erro ao registrar Usuário: " . $e->getMessage());
+        error_log("Erro ao registrar usuario: " . $e->getMessage());
         header('Location: ../../front-end/html/home.php');
         exit();
     }
@@ -36,11 +36,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registrar Usuário</title>
+    <title>Estoque fácil</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../css/register-cliente.css" />
-    <script src="../js/max-caracteres.js"></script>
+    <!-- Link para o CSS externo -->
+    <link rel="stylesheet" href="../css/clientes.css" />
 </head>
 
 <body>
@@ -111,58 +111,86 @@
             ?>
         </div>
     </nav>
-
     <main>
-      <div class="container my-5">
-        <!-- Título Principal -->
-        <h1 class="text-left mb-4">Registrar Usuário</h1>
-    
-        <!-- Formulário -->
-        <form method="POST">
-            <!-- Seção de Informações --> 
-    
-            <div class="mb-3">
-                <label for="usuarioNome" class="form-label">Nome do Usuário</label>
-                <input type="text" class="form-control" id="usuarioNome" name="usuarioNome" required />
+        <div class="container my-5">
+            <h1 class="text-left mb-4">Clientes</h1>
+            <!-- Barra de busca -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="search-bar" placeholder="Buscar clientes..."
+                        onkeyup="searchProduct()" />
+                    <button class="btn btn-primary" id="btn-pesquisar"> Pesquisar </button>
+                    <a href="./register-cliente.php" class="btn btn-primary">Novo</a>
+                </div>
             </div>
-    
-            <div class="mb-3">
-                <label for="usuarioEmail" class="form-label">E-mail</label>
-                <input type="email" class="form-control" id="usuarioEmail" name="usuarioEmail" required />
-            </div>
-    
-            <div class="mb-3">
-                <label for="usuarioSenha" class="form-label">Senha</label>
-                <input type="password" class="form-control" id="usuarioSenha" name="usuarioSenha" required />
-            </div>
-    
-            <div class="mb-3">
-                <label for="usuarioConfirmarSenha" class="form-label">Confirmar Senha</label>
-                <input type="password" class="form-control" id="usuarioConfirmarSenha" name="usuarioConfirmarSenha" required />
-            </div>
-    
-            <!-- Seleção de Permissões -->
-            <div class="mb-3">
-                <label for="usuarioPermissao" class="form-label">Permissões</label>
-                <select class="form-control" id="usuarioPermissao" name="usuarioPermissao" required>
-                    <option value="">Selecione</option>
-                    <option value="1">Administrador</option>
-                    <option value="2">Estoquista</option>
-                    <option value="3">Operador</option>
-                </select>
-            </div>
-    
-            <!-- Botão de Submissão -->
-            <button type="submit" class="btn btn-primary">Registrar Usuário</button>
-        </form>
-    </div>
-    
-            </form>
+            
+            <?php
+                echo '<table class="table table-bordered table-striped" id="product-table">';
+                echo '<thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Tipo</th>
+                            <th>Razão Social</th>
+                            <th>Nome</th>
+                            <th>Sobrenome</th>
+                            <th>CPF</th>
+                            <th>CNPJ</th>
+                            <th>Cidade-UF</th>
+                            <th>Status</th>
+                            <th>Data</th>
+                            <th>Editar</th>
+                        </tr>
+                    </thead>';
+                echo '<tbody id="product-list">';
+
+                // Verifica se há resultados na consulta
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($result) {
+                    // Exibe a primeira linha já capturada no fetch
+                    do {
+                        // Pegando os dados retornados pela consulta
+                        $clienteId = htmlspecialchars($result['ClienteId']);
+                        $tipoClienteNome = htmlspecialchars($result['TipoClienteNome']);
+                        $clienteRazaoSocial = htmlspecialchars($result['ClienteRazaoSocial']);
+                        $clienteNome = htmlspecialchars($result['ClienteNome']);
+                        $clienteSobrenome = htmlspecialchars($result['ClienteSobrenome']);
+                        $clienteCpf = htmlspecialchars($result['ClienteCpf']);
+                        $clienteCnpj = htmlspecialchars($result['ClienteCnpj']);
+                        $cidadeUf = htmlspecialchars($result['CidadeNome']) . " - " . htmlspecialchars($result['EstadoUf']);
+                        $clienteStatus = $result['ClienteStatus'] == 1 ? 'Ativo' : 'Inativo';
+                        $clienteData = date('d/m/Y', strtotime($result['ClienteData']));
+                    
+                        // Exibindo os dados na tabela
+                        echo "<tr>
+                                <td>{$clienteId}</td>
+                                <td>{$tipoClienteNome}</td>
+                                <td>{$clienteRazaoSocial}</td>
+                                <td>{$clienteNome}</td>
+                                <td>{$clienteSobrenome}</td>
+                                <td>{$clienteCpf}</td>
+                                <td>{$clienteCnpj}</td>
+                                <td>{$cidadeUf}</td>
+                                <td>{$clienteStatus}</td>
+                                <td>{$clienteData}</td>
+                                <td><a href='./edit-cliente.php?clienteId=".$clienteId."'>Editar</a></td>
+                            </tr>";
+                    } while ($result = $stmt->fetch(PDO::FETCH_ASSOC)); // Continua pegando as próximas linhas
+                    
+                } else {
+                    // Caso não tenha resultados
+                    echo '<tr>
+                            <td colspan="11" class="text-center">Nenhum Cliente Encontrado</td>
+                          </tr>';
+                }
+
+                echo '</tbody>';
+                echo '</table>';
+                ?>
+
         </div>
     </main>
-
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="./script/script.js"></script> -->
 </body>
 
 </html>

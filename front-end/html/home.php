@@ -1,16 +1,19 @@
-<?php
-session_start();
-require('../../back-end/verificar-logado.php');
+<?php 
+    session_start();
+    require('../../back-end/verificar-logado.php');
 
-if (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Administrador') {
-    $permissaoUsuario = 1;
-} elseif (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Estoquista') {
-    $permissaoUsuario = 2;
-} elseif (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Operador') {
-    $permissaoUsuario = 3;
-} else {
-    require('../../back-end/logout.php');
-}
+    if (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Administrador') {
+        $permissaoUsuario = 1;
+    }
+    elseif (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Estoquista') {
+        $permissaoUsuario = 2;
+    }
+    elseif (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Operador') {
+        $permissaoUsuario = 3;
+    }
+    else {
+        require('../../back-end/logout.php');
+    }
 ?>
 
 <!DOCTYPE html>
@@ -38,17 +41,17 @@ if (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Administ
             </button>
 
             <?php
-            echo '<div class="collapse navbar-collapse" id="navbarNav">';
-            echo '<ul class="navbar-nav ms-auto">';
+                echo '<div class="collapse navbar-collapse" id="navbarNav">';
+                echo '<ul class="navbar-nav ms-auto">';
 
-            // Home e Sair são exibidos para todos os níveis de permissão.
-            echo '<li class="nav-item">
+                // Home e Sair são exibidos para todos os níveis de permissão.
+                echo '<li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="./home.php">Home</a>
                     </li>';
 
-            if ($permissaoUsuario == 1) {
-                // Permissão total: mostra todas as opções. 
-                echo '<li class="nav-item">
+                if ($permissaoUsuario == 1) {
+                    // Permissão total: mostra todas as opções.
+                    echo '<li class="nav-item">
                             <div class="nav-link" onclick="entradasaida()">Movimentações</div>
                         </li>
                         <li class="nav-item">
@@ -66,9 +69,9 @@ if (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Administ
                         <li class="nav-item">
                             <a class="nav-link" href="./cliente.html">Relatórios</a>
                         </li>';
-            } elseif ($permissaoUsuario == 2) {
-                // Permissão intermediária: mostra opções específicas.
-                echo '<li class="nav-item">
+                } elseif ($permissaoUsuario == 2) {
+                    // Permissão intermediária: mostra opções específicas.
+                    echo '<li class="nav-item">
                             <div class="nav-link" onclick="entradasaida()">Movimentações</div>
                         </li>
                         <li class="nav-item">
@@ -83,47 +86,41 @@ if (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Administ
                         <li class="nav-item">
                             <a class="nav-link" href="./cliente.html">Relatórios</a>
                         </li>';
-            } elseif ($permissaoUsuario == 3)
-                // Permissão restrita: mostra apenas Estoque e Relatórios.
-                echo '<li class="nav-item">
+                } elseif ($permissaoUsuario == 3) {
+                    // Permissão restrita: mostra apenas Estoque e Relatórios.
+                    echo '<li class="nav-item">
                             <a class="nav-link" href="./cliente.html">Estoque</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="./cliente.html">Relatórios</a>
                         </li>';
+                }
 
-
-            // Sempre exibe a opção "Sair".
-            echo '<li class="nav-item">
+                // Sempre exibe a opção "Sair".
+                echo '<li class="nav-item">
                         <a class="nav-link" href="../../back-end/logout.php">Sair</a>
                     </li>';
 
-            echo '</ul>';
-            echo '</div>';
+                echo '</ul>';
+                echo '</div>';
             ?>
         </div>
     </nav>
 
     <!-- Conteúdo Principal -->
     <div class="container my-5">
-        <h4 class="text-left mb-1">Olá <?php echo $_SESSION['UsuarioNome'] ?></h4>
-        <h5 class="text-left mb-4">Usuário <?php echo $_SESSION['PermissaoNome'] ?></h5>
+        <h4 class="text-left mb-1">Olá <?php echo $_SESSION['UsuarioNome']?></h4>
+        <h5 class="text-left mb-4">Usuário <?php echo $_SESSION['PermissaoNome']?></h5>
         <h1 class="text-left mb-4">Produtos</h1>
-
+        
 
         <!-- Barra de busca -->
         <div class="row mb-4">
-            <!-- Campo de busca ocupando 8 colunas -->
-            <div class="col-md-10">
-                <input type="text" class="form-control" id="search-bar" placeholder="Buscar produto..." onkeyup="searchProduct()" />
-            </div>
-            <!-- Botão ocupando 4 colunas -->
-            <div class="col-md-2">
-                <button class="btn btn-primary w-100" onclick="addProduct()">Adicionar Produto</button>
+            <div class="col-md-6">
+                <input type="text" class="form-control" id="search-bar" placeholder="Buscar produto..."
+                    onkeyup="searchProduct()" />
             </div>
         </div>
-
-
 
         <!-- Tabela de produtos -->
         <table class="table table-bordered table-striped" id="product-table">
@@ -145,7 +142,9 @@ if (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Administ
         </table>
 
         <!-- Botão para adicionar novo produto -->
-
+        <button class="btn btn-primary" onclick="addProduct()">
+            Adicionar Produto
+        </button>
     </div>
 
     <!-- Modal de Adição de Produto -->
@@ -198,86 +197,86 @@ if (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Administ
 
     <!-- Modal de Entrada/Saída -->
     <div class="modal fade" id="entradaSaidaModal" tabindex="-1" aria-labelledby="entradaSaidaModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="entradaSaidaModalLabel">Registrar Entrada/Saída</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="entrada-saida-form">
-                        <!-- Tipo de Operação (Entrada ou Saída) -->
-                        <div class="mb-3">
-                            <label for="tipo_operacao" class="form-label">Tipo de Operação:</label>
-                            <select class="form-select" id="tipo_operacao" name="tipo_operacao" onchange="mostrarCamposEntradaSaida()">
-                                <option value=""></option>
-                                <option value="entrada">Entrada</option>
-                                <option value="saida">Saída</option>
-                            </select>
-                        </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="entradaSaidaModalLabel">Registrar Entrada/Saída</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="entrada-saida-form">
+                    <!-- Tipo de Operação (Entrada ou Saída) -->
+                    <div class="mb-3">
+                        <label for="tipo_operacao" class="form-label">Tipo de Operação:</label>
+                        <select class="form-select" id="tipo_operacao" name="tipo_operacao" onchange="mostrarCamposEntradaSaida()">
+                            <option value=""></option>
+                            <option value="entrada">Entrada</option>
+                            <option value="saida">Saída</option>
+                        </select>
+                    </div>
 
-                        <!-- Tipo de Entrada (Fornecimento ou Fabricação) - Somente para Entrada -->
-                        <div id="campo_tipo_entrada" class="mb-3" style="display: none;">
-                            <label for="tipo_entrada" class="form-label">Tipo de Entrada:</label>
-                            <select class="form-select" id="tipo_entrada" name="tipo_entrada" onchange="mostrarCamposEspecificosEntrada()">
-                                <option value="fornecimento">Fornecimento</option>
-                                <option value="fabricacao">Fabricação</option>
-                            </select>
-                        </div>
+                    <!-- Tipo de Entrada (Fornecimento ou Fabricação) - Somente para Entrada -->
+                    <div id="campo_tipo_entrada" class="mb-3" style="display: none;">
+                        <label for="tipo_entrada" class="form-label">Tipo de Entrada:</label>
+                        <select class="form-select" id="tipo_entrada" name="tipo_entrada" onchange="mostrarCamposEspecificosEntrada()">
+                            <option value="fornecimento">Fornecimento</option>
+                            <option value="fabricacao">Fabricação</option>
+                        </select>
+                    </div>
 
-                        <!-- Nota Fiscal (Somente para Saída e Fornecimento) -->
-                        <div id="campo_nota_fiscal" class="mb-3" style="display: none;">
-                            <label for="nota_fiscal" class="form-label">Nota Fiscal:</label>
-                            <input type="text" class="form-control" id="nota_fiscal" name="nota_fiscal">
-                        </div>
+                    <!-- Nota Fiscal (Somente para Saída e Fornecimento) -->
+                    <div id="campo_nota_fiscal" class="mb-3" style="display: none;">
+                        <label for="nota_fiscal" class="form-label">Nota Fiscal:</label>
+                        <input type="text" class="form-control" id="nota_fiscal" name="nota_fiscal">
+                    </div>
 
-                        <!-- Cliente (Somente para Saída e Fabricação) -->
-                        <div id="campo_cliente" class="mb-3" style="display: none;">
-                            <label for="cliente" class="form-label">Cliente:</label>
-                            <input type="text" class="form-control" id="cliente" name="cliente">
-                        </div>
+                    <!-- Cliente (Somente para Saída e Fabricação) -->
+                    <div id="campo_cliente" class="mb-3" style="display: none;">
+                        <label for="cliente" class="form-label">Cliente:</label>
+                        <input type="text" class="form-control" id="cliente" name="cliente">
+                    </div>
 
-                        <!-- Turno (Somente para Fabricação) -->
-                        <div id="campo_turno" class="mb-3" style="display: none;">
-                            <label for="turno" class="form-label">Turno:</label>
-                            <input type="text" class="form-control" id="turno" name="turno">
-                        </div>
+                    <!-- Turno (Somente para Fabricação) -->
+                    <div id="campo_turno" class="mb-3" style="display: none;">
+                        <label for="turno" class="form-label">Turno:</label>
+                        <input type="text" class="form-control" id="turno" name="turno">
+                    </div>
 
-                        <!-- Campo específico para Entrada (Matéria Prima) -->
-                        <div id="campo_materia_prima" class="mb-3" style="display: none;">
-                            <label for="materia_prima" class="form-label">Matéria Prima:</label>
-                            <input type="text" class="form-control" id="materia_prima" name="materia_prima">
-                        </div>
+                    <!-- Campo específico para Entrada (Matéria Prima) -->
+                    <div id="campo_materia_prima" class="mb-3" style="display: none;">
+                        <label for="materia_prima" class="form-label">Matéria Prima:</label>
+                        <input type="text" class="form-control" id="materia_prima" name="materia_prima">
+                    </div>
 
-                        <!-- Produto (para ambos) -->
-                        <div class="mb-3">
-                            <label for="produto" class="form-label">Produto:</label>
-                            <input type="text" class="form-control" id="produto" name="produto" required>
-                        </div>
+                    <!-- Produto (para ambos) -->
+                    <div class="mb-3">
+                        <label for="produto" class="form-label">Produto:</label>
+                        <input type="text" class="form-control" id="produto" name="produto" required>
+                    </div>
 
-                        <!-- Quantidade (para ambos) -->
-                        <div class="mb-3">
-                            <label for="quantidade" class="form-label">Quantidade:</label>
-                            <input type="number" class="form-control" id="quantidade" name="quantidade" required>
-                        </div>
+                    <!-- Quantidade (para ambos) -->
+                    <div class="mb-3">
+                        <label for="quantidade" class="form-label">Quantidade:</label>
+                        <input type="number" class="form-control" id="quantidade" name="quantidade" required>
+                    </div>
 
-                        <!-- Responsável (para ambos) -->
-                        <div id="campo_responsavel" class="mb-3">
-                            <label for="responsavel" class="form-label">Responsável:</label>
-                            <input type="text" class="form-control" id="responsavel" name="responsavel" required>
-                        </div>
+                    <!-- Responsável (para ambos) -->
+                    <div id="campo_responsavel" class="mb-3">
+                        <label for="responsavel" class="form-label">Responsável:</label>
+                        <input type="text" class="form-control" id="responsavel" name="responsavel" required>
+                    </div>
 
-                        <!-- Data (para ambos) -->
-                        <div class="mb-3">
-                            <label for="data_operacao" class="form-label">Data:</label>
-                            <input type="date" class="form-control" id="data_operacao" name="data_operacao" required>
-                        </div>
+                    <!-- Data (para ambos) -->
+                    <div class="mb-3">
+                        <label for="data_operacao" class="form-label">Data:</label>
+                        <input type="date" class="form-control" id="data_operacao" name="data_operacao" required>
+                    </div>
 
-                        <button type="submit" class="btn btn-primary">Registrar Operação</button>
-                    </form>
-                </div>
+                    <button type="submit" class="btn btn-primary">Registrar Operação</button>
+                </form>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Bootstrap JS e JS Externo -->

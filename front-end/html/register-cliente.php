@@ -24,7 +24,7 @@
         header('Location: ../../front-end/html/home.php');
         exit();
     } catch (Exception $e) {
-        error_log("Erro ao registrar Usuário: " . $e->getMessage());
+        error_log("Erro ao registrar usuario: " . $e->getMessage());
         header('Location: ../../front-end/html/home.php');
         exit();
     }
@@ -36,7 +36,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registrar Usuário</title>
+    <title>Registrar Cliente</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../css/register-cliente.css" />
@@ -113,50 +113,85 @@
     </nav>
 
     <main>
-      <div class="container my-5">
-        <!-- Título Principal -->
-        <h1 class="text-left mb-4">Registrar Usuário</h1>
-    
-        <!-- Formulário -->
-        <form method="POST">
-            <!-- Seção de Informações --> 
-    
-            <div class="mb-3">
-                <label for="usuarioNome" class="form-label">Nome do Usuário</label>
-                <input type="text" class="form-control" id="usuarioNome" name="usuarioNome" required />
-            </div>
-    
-            <div class="mb-3">
-                <label for="usuarioEmail" class="form-label">E-mail</label>
-                <input type="email" class="form-control" id="usuarioEmail" name="usuarioEmail" required />
-            </div>
-    
-            <div class="mb-3">
-                <label for="usuarioSenha" class="form-label">Senha</label>
-                <input type="password" class="form-control" id="usuarioSenha" name="usuarioSenha" required />
-            </div>
-    
-            <div class="mb-3">
-                <label for="usuarioConfirmarSenha" class="form-label">Confirmar Senha</label>
-                <input type="password" class="form-control" id="usuarioConfirmarSenha" name="usuarioConfirmarSenha" required />
-            </div>
-    
-            <!-- Seleção de Permissões -->
-            <div class="mb-3">
-                <label for="usuarioPermissao" class="form-label">Permissões</label>
-                <select class="form-control" id="usuarioPermissao" name="usuarioPermissao" required>
-                    <option value="">Selecione</option>
-                    <option value="1">Administrador</option>
-                    <option value="2">Estoquista</option>
-                    <option value="3">Operador</option>
-                </select>
-            </div>
-    
-            <!-- Botão de Submissão -->
-            <button type="submit" class="btn btn-primary">Registrar Usuário</button>
-        </form>
-    </div>
-    
+        <div class="container my-5">
+            <h1 class="text-left mb-4">Registrar Cliente</h1>
+            <form method="POST">
+                <!-- Tópico Informações -->
+                <h4>Informações</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tipoClienteId" class="form-label">Tipo de Cliente</label>
+                        <select class="form-control" id="tipoClienteId" name="tipoClienteId" required>
+                            <option value="">Selecione</option>
+                            <option value="1">Cliente Físico</option>
+                            <option value="2">Cliente Jurídico</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="clienteRazaoSocial" class="form-label">Razão Social</label>
+                        <input type="text" class="form-control" id="clienteRazaoSocial" name="clienteRazaoSocial" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="clienteNome" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="clienteNome" name="clienteNome" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="clienteSobrenome" class="form-label">Sobrenome</label>
+                        <input type="text" class="form-control" id="clienteSobrenome" name="clienteSobrenome" required />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="clienteCpf" class="form-label">CPF</label>
+                        <input type="text" class="form-control" id="clienteCpf" name="clienteCpf" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="clienteCnpj" class="form-label">CNPJ</label>
+                        <input type="text" class="form-control" id="clienteCnpj" name="clienteCnpj" />
+                    </div>
+                    <div class="form-group">
+                        <label for="clienteObser" class="form-label">Observação</label>
+                        <textarea class="form-control" id="clienteObser" name="clienteObser"></textarea>
+                        <small id="char-count" class="form-text text-muted"></small>
+                    </div>
+                </div>
+
+                <!-- Tópico Endereço -->
+                <h4 class="mt-4">Endereço</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="clienteEnderecoLogra" class="form-label">Endereço</label>
+                        <input type="text" class="form-control" id="clienteEnderecoLogra" name="clienteEnderecoLogra" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="clienteEnderecoNum" class="form-label">Número</label>
+                        <input type="text" class="form-control" id="clienteEnderecoNum" name="clienteEnderecoNum" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="clienteEnderecoComp" class="form-label">Complemento</label>
+                        <input type="text" class="form-control" id="clienteEnderecoComp" name="clienteEnderecoComp" />
+                    </div>
+                    <div class="form-group">
+                        <label for="clienteEnderecoBai" class="form-label">Bairro</label>
+                        <input type="text" class="form-control" id="clienteEnderecoBai" name="clienteEnderecoBai" />
+                    </div>
+                    <div class="form-group">
+                        <label for="clienteEnderecoCep" class="form-label">CEP</label>
+                        <input type="text" class="form-control" id="clienteEnderecoCep" name="clienteEnderecoCep" required />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cidadeId" class="form-label">Cidade</label>
+                        <select class="form-control" id="cidadeId" name="cidadeId" required>
+                            <option value="">Selecione</option>
+                            <!-- Adicionar opções de cidade dinamicamente -->
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-4">Registrar Cliente</button>
             </form>
         </div>
     </main>
