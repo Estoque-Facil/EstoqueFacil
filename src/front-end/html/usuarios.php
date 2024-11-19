@@ -42,45 +42,79 @@
   </head>
   <body>
     <!-- Barra de navegação -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #3c4763">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#"><img id="navbar-brand-img" src="../img/Estoque-Fácil.png"
-                    alt="" /></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #3c4763;">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img id="navbar-brand-img" src="../img/Estoque-Fácil.png" alt="Estoque Fácil" />
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="./home.php">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./usuarios.php">Movimentações</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="./usuario.html">Usuários</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./clientes.php">Clientes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./cliente.html">Produtos</a>
-                    </li>
-                    <li class="nav-item">
+        <?php
+            echo '<div class="collapse navbar-collapse" id="navbarNav">';
+            echo '<ul class="navbar-nav ms-auto">';
+
+            // Home é exibido para todos os níveis de permissão
+            echo '<li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="./home.php">Home</a>
+                </li>';
+
+            if ($permissaoUsuario == 1) {
+                // Menu para permissão total
+                echo '<li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="menuCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Cadastros
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="menuCadastros">
+                            <li><a class="dropdown-item" href="./usuarios.php">Usuários</a></li>
+                            <li><a class="dropdown-item" href="./cliente.html">Produtos</a></li>
+                            <li><a class="dropdown-item" href="./clientes.php">Clientes</a></li>
+                        </ul>
+                    </li>';
+                echo '<li class="nav-item">
                         <a class="nav-link" href="./cliente.html">Estoque</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="./cliente.html">Relatórios</a>
+                        <div class="nav-link" onclick="entradasaida()">Movimentações</div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="../../back-end/logout.php">Sair</a>
+                        <a class="nav-link" href="./cliente.html">Relatórios</a>
+                    </li>';
+            } elseif ($permissaoUsuario == 2) {
+                // Menu para permissão intermediária
+                echo '<li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="menuCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Cadastros
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="menuCadastros">
+                            <li><a class="dropdown-item" href="./clientes.php">Clientes</a></li>
+                            <li><a class="dropdown-item" href="./cliente.html">Produtos</a></li>
+                        </ul>
+                    </li>';
+                echo '<li class="nav-item">
+                        <a class="nav-link" href="./cliente.html">Estoque</a>
                     </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+                    <li class="nav-item">
+                        <div class="nav-link" onclick="entradasaida()">Movimentações</div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./cliente.html">Relatórios</a>
+                    </li>';
+            }
+
+            // Sempre exibe a opção "Sair"
+            echo '<li class="nav-item">
+                    <a class="nav-link" href="../../back-end/logout.php">Sair</a>
+                </li>';
+
+            echo '</ul>';
+            echo '</div>';
+        ?>
+    </div>
+</nav>
+
+    
     <main>
         <div class="container my-5">
             <h1 class="text-left mb-4">Usuários </h1>
