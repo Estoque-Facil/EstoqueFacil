@@ -1,146 +1,172 @@
 <?php
+session_start();
+require('../../back-end/verificar-logado.php');
 
-    session_start();
-    require('../../back-end/verificar-logado.php');
+if (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Administrador') {
+    $permissaoUsuario = 1;
+} elseif (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Estoquista') {
+    $permissaoUsuario = 2;
+} else {
+    require('../../back-end/logout.php');
+}
 
-    if ($_SESSION['PermissaoNome'] !== 'Administrador') {
-        require('../../back-end/logout.php');
-    }
+try {
+    // Pegando os usuários cadastrados
+    require('C:\João\Projetos\EstoqueFacil\src\back-end\conexao.php');
 
-    function getSelectOptions($sql) {
-      try {
-          include '../../back-end/conexao.php';
-          $options = '';
-
-          $stmt = $conexao->prepare($sql);
-          $stmt->execute();
-          $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
-          $stmt->closeCursor();   
-
-          if (empty($resultados)) {
-              $options .= '<option value="" disabled>Nenhum item encontrado</option>';
-          } else {
-              foreach ($resultados as $resultado) {
-                  $options .= '<option value="' . $resultado['id'] . '">' . $resultado['nome'] . '</option>';
-              }
-          }
-          
-          return $options;
-      } catch (Exception $e) {
-          error_log("Erro na função getSelectOptions: " . $e->getMessage());
-          echo '<script>
-                  alert("Ocorreu um erro inesperado. Tente novamente.");
-                  window.location.href = "../../frontend/html/home-contratante.php";
-              </script>';
-      }
-        
-    }
-
-    $permissaoOptions = getSelectOptions('SELECT PermissaoId AS id, PermissaoNome AS nome FROM TbPermissao');
-
+    $stmt = $conexao->prepare('SELECT * FROM VwSelecionarClientesBasico');
+    $stmt->execute();
+} catch (PDOException $e) {
+    error_log("Erro no banco: " . $e->getMessage());
+    header('Location: ../../front-end/html/home.php');
+    exit();
+} catch (Exception $e) {
+    error_log("Erro ao registrar Usuário: " . $e->getMessage());
+    header('Location: ../../front-end/html/home.php');
+    exit();
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registro - estoque fácil</title>
-    <!-- Link do Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../css/register-usuario.css" />
-    <script src="../js/msg.js"></script>
-  </head>
-  <body>
-    <div class="register-container">
-      <div class="register-title">
-        <img src="../img/logo.jpg" alt="" />
-      </div>
+    <title>Registrar Usuário</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/register-cliente.css" />
+    <script src="../js/max-caracteres.js"></script>
+</head>
 
-      <h2 class="register-title">Registro</h2>
-      <form action="../../back-end/processar-registro.php" method="post" id="form-register">
-        <div class="mb-3">
-          <label for="username" class="form-label">Usuário</label>
-          <input
-            type="text"
-            class="form-control"
-            id="username"
-            name="username"
-            placeholder="Digite seu usuário"
-          />
+<body>
+    <!-- Barra de navegação -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #3c4763;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img id="navbar-brand-img" src="../img/Estoque-Fácil.png" alt="Estoque Fácil" />
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <?php
+            echo '<div class="collapse navbar-collapse" id="navbarNav">';
+            echo '<ul class="navbar-nav ms-auto">';
+
+            // Home é exibido para todos os níveis de permissão
+            echo '<li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="./home.php">Home</a>
+                </li>';
+
+            if ($permissaoUsuario == 1) {
+                // Menu para permissão total
+                echo '<li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="menuCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Cadastros
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="menuCadastros">
+                            <li><a class="dropdown-item" href="./usuarios.php">Usuários</a></li>
+                            <li><a class="dropdown-item" href="./cliente.html">Produtos</a></li>
+                            <li><a class="dropdown-item" href="./clientes.php">Clientes</a></li>
+                        </ul>
+                    </li>';
+                echo '<li class="nav-item">
+                        <a class="nav-link" href="./cliente.html">Estoque</a>
+                    </li>
+                    <li class="nav-item">
+                        <div class="nav-link" onclick="entradasaida()">Movimentações</div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./cliente.html">Relatórios</a>
+                    </li>';
+            } elseif ($permissaoUsuario == 2) {
+                // Menu para permissão intermediária
+                echo '<li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="menuCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Cadastros
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="menuCadastros">
+                            <li><a class="dropdown-item" href="./clientes.php">Clientes</a></li>
+                            <li><a class="dropdown-item" href="./cliente.html">Produtos</a></li>
+                        </ul>
+                    </li>';
+                echo '<li class="nav-item">
+                        <a class="nav-link" href="./cliente.html">Estoque</a>
+                    </li>
+                    <li class="nav-item">
+                        <div class="nav-link" onclick="entradasaida()">Movimentações</div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./cliente.html">Relatórios</a>
+                    </li>';
+            }
+
+            // Sempre exibe a opção "Sair"
+            echo '<li class="nav-item">
+                    <a class="nav-link" href="../../back-end/logout.php">Sair</a>
+                </li>';
+
+            echo '</ul>';
+            echo '</div>';
+            ?>
         </div>
-        <div class="mb-3">
-          <label for="email" class="form-label">Email</label>
-          <input
-            type="email"
-            class="form-control"
-            id="email"
-            name="email"
-            placeholder="Digite seu email"
-          />
-        </div>
-        <div class="mb-3">
-          <label for="password" class="form-label">Senha</label>
-          <input
-            type="password"
-            class="form-control"
-            id="password"
-            name="password"
-            placeholder="Digite sua senha"
-          />
-        </div>
-        <div class="mb-3">
-          <label for="confirm-password" class="form-label"
-            >Confirmar Senha</label
-          >
-          <input
-            type="password"
-            class="form-control"
-            id="confirm-password"
-            placeholder="Confirme sua senha"
-          />
-        </div>
-        <div class="mb-3">
-          <label for="permissions" class="form-label"
-            >Permissões</label
-          >
-          <select name="permissions" id="permissions">
-            <option value="" disabled selected>Escolha ao menos uma</option>
-            <?php echo $permissaoOptions ?>
-          </select>
+    </nav>
+
+
+
+    <main>
+        <div class="container my-5">
+            <!-- Título Principal -->
+            <h1 class="text-left mb-4">Registrar Usuário</h1>
+
+            <!-- Formulário -->
+            <form method="POST">
+                <!-- Seção de Informações -->
+
+                <div class="mb-3">
+                    <label for="usuarioNome" class="form-label">Nome do Usuário</label>
+                    <input type="text" class="form-control" id="usuarioNome" name="usuarioNome" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="usuarioEmail" class="form-label">E-mail</label>
+                    <input type="email" class="form-control" id="usuarioEmail" name="usuarioEmail" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="usuarioSenha" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="usuarioSenha" name="usuarioSenha" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="usuarioConfirmarSenha" class="form-label">Confirmar Senha</label>
+                    <input type="password" class="form-control" id="usuarioConfirmarSenha" name="usuarioConfirmarSenha" required />
+                </div>
+
+                <!-- Seleção de Permissões -->
+                <div class="mb-3">
+                    <label for="usuarioPermissao" class="form-label">Permissões</label>
+                    <select class="form-control" id="usuarioPermissao" name="usuarioPermissao" required>
+                        <option value="">Selecione</option>
+                        <option value="1">Administrador</option>
+                        <option value="2">Estoquista</option>
+                        <option value="3">Operador</option>
+                    </select>
+                </div>
+
+                <!-- Botão de Submissão -->
+                <button type="submit" class="btn btn-primary">Registrar Usuário</button>
+            </form>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">Registrar</button>
-      </form>
-    </div>
-    <?php
-        if (isset($_GET['status']) && $_GET['status'] === 'existente') {
-          echo '<div class="register-nao-ok" id="register-nao-ok">
-                  <p>Email já cadastrado!</p>
-                </div>';
-          echo '<script>fecharMensagem("register-nao-ok");</script>';
-        }
-        if (isset($_GET['status']) && $_GET['status'] === 'sucesso' && isset($_GET['usuarioid'])) {
-          echo  '<div class="register-ok" id="register-ok">
-                  <p>Cadastro realizado com sucesso!</p>
-                </div>';
-          echo  '<script>fecharMensagem("register-ok");</script>';
-          echo  '<div class="cod-user" id="cod-user">
-                  <p> Código do Usuário Cadastrado: '.$_GET['usuarioid'].'</p>
-                </div>';
-          echo  '<script>redirecionarParaHome();</script>';
-        }
-        if (isset($_GET['status']) && $_GET['status'] === 'falha') {
-          echo  '<div class="register-nao-ok" id="register-nao-ok">
-                  <p>Erro no cadastro, tente novamente!</p>
-                </div>';
-          echo  '<script>fecharMensagem("register-nao-ok");</script>';
-        }
-    ?>
+        </form>
+        </div>
+    </main>
+
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
-    </script>
-  </body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
 </html>
