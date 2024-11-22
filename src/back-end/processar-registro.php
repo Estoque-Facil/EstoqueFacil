@@ -63,3 +63,7 @@ session_start();
     }
 
 ?>
+
+<h4 class="text-left mb-1">Olá <?php echo $_SESSION['UsuarioNome'] ?></h4>
+        <h5 class="text-left mb-4">Usuário <?php echo $_SESSION['PermissaoNome'] ?></h5>
+        <h1 class="text-left mb-4">Produtos</h1>

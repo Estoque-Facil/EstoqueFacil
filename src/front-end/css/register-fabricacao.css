@@ -24,6 +24,14 @@ main {
     background-color: #ffffff;
 }
 
+#mat-prima {
+    display: none;
+}
+
+#id-fab, #qtd-fab {
+    display: none;
+}
+
 .form-row {
     display: flex;
     flex-wrap: wrap;

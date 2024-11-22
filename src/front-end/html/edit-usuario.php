@@ -87,90 +87,83 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.8/jquery.inputmask.min.js"></script>
     <script src="../js/msg.js"></script>
-    <script src="../js/edit-usuario.js"></script>
+    <script src="../js/edit-usuario.js" defer></script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script defer>
-        function redirecionarParaUsuarios() {
-            setTimeout(() =>{
-              window.location.href = '../../front-end/html/usuarios.php';
-            }, 1000); 
-        }
-    </script>
   </head>
   <body>
     <!-- Barra de navegação -->
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #3c4763;">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-            <img id="navbar-brand-img" src="../img/Estoque-Fácil.png" alt="Estoque Fácil" />
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img id="navbar-brand-img" src="../img/Estoque-Fácil.png" alt="Estoque Fácil" />
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <?php
-            echo '<div class="collapse navbar-collapse" id="navbarNav">';
-            echo '<ul class="navbar-nav ms-auto">';
+            <?php
+                echo '<div class="collapse navbar-collapse" id="navbarNav">';
+                echo '<ul class="navbar-nav ms-auto">';
 
-            // Home é exibido para todos os níveis de permissão
-            echo '<li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./home.php">Home</a>
-                </li>';
-
-            if ($permissaoUsuario == 1) {
-                // Menu para permissão total
-                echo '<li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="menuCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Cadastros
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="menuCadastros">
-                            <li><a class="dropdown-item" href="./usuarios.php">Usuários</a></li>
-                            <li><a class="dropdown-item" href="./cliente.html">Produtos</a></li>
-                            <li><a class="dropdown-item" href="./clientes.php">Clientes</a></li>
-                        </ul>
-                    </li>';
+                // Home é exibido para todos os níveis de permissão
                 echo '<li class="nav-item">
-                        <a class="nav-link" href="./cliente.html">Estoque</a>
-                    </li>
-                    <li class="nav-item">
-                        <div class="nav-link" onclick="entradasaida()">Movimentações</div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./cliente.html">Relatórios</a>
+                        <a class="nav-link active" aria-current="page" href="./home.php">Home</a>
                     </li>';
-            } elseif ($permissaoUsuario == 2) {
-                // Menu para permissão intermediária
-                echo '<li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="menuCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Cadastros
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="menuCadastros">
-                            <li><a class="dropdown-item" href="./clientes.php">Clientes</a></li>
-                            <li><a class="dropdown-item" href="./cliente.html">Produtos</a></li>
-                        </ul>
-                    </li>';
+
+                if ($permissaoUsuario == 1) {
+                    // Menu para permissão total
+                    echo '<li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="menuCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Cadastros
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="menuCadastros">
+                                <li><a class="dropdown-item" href="./usuarios.php">Usuários</a></li>
+                                <li><a class="dropdown-item" href="./cliente.html">Produtos</a></li>
+                                <li><a class="dropdown-item" href="./clientes.php">Clientes</a></li>
+                            </ul>
+                        </li>';
+                    echo '<li class="nav-item">
+                            <a class="nav-link" href="./cliente.html">Estoque</a>
+                        </li>
+                        <li class="nav-item">
+                            <div class="nav-link" onclick="entradasaida()">Movimentações</div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./cliente.html">Relatórios</a>
+                        </li>';
+                } elseif ($permissaoUsuario == 2) {
+                    // Menu para permissão intermediária
+                    echo '<li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="menuCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Cadastros
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="menuCadastros">
+                                <li><a class="dropdown-item" href="./clientes.php">Clientes</a></li>
+                                <li><a class="dropdown-item" href="./cliente.html">Produtos</a></li>
+                            </ul>
+                        </li>';
+                    echo '<li class="nav-item">
+                            <a class="nav-link" href="./cliente.html">Estoque</a>
+                        </li>
+                        <li class="nav-item">
+                            <div class="nav-link" onclick="entradasaida()">Movimentações</div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./cliente.html">Relatórios</a>
+                        </li>';
+                }
+
+                // Sempre exibe a opção "Sair"
                 echo '<li class="nav-item">
-                        <a class="nav-link" href="./cliente.html">Estoque</a>
-                    </li>
-                    <li class="nav-item">
-                        <div class="nav-link" onclick="entradasaida()">Movimentações</div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./cliente.html">Relatórios</a>
+                        <a class="nav-link" href="../../back-end/logout.php">Sair</a>
                     </li>';
-            }
 
-            // Sempre exibe a opção "Sair"
-            echo '<li class="nav-item">
-                    <a class="nav-link" href="../../back-end/logout.php">Sair</a>
-                </li>';
-
-            echo '</ul>';
-            echo '</div>';
-        ?>
-    </div>
-</nav>
+                echo '</ul>';
+                echo '</div>';
+            ?>
+        </div>
+    </nav>
 
     <main>
         <div class="edit-usuario-container">
@@ -216,7 +209,9 @@
                             id="username"
                             name="username"
                             value="<?php echo $result['UsuarioNome'] ?>"
+                            oninput="validarUsername()"
                         />
+                        <span id="erro-username"></span>
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
@@ -226,7 +221,9 @@
                             id="email"
                             name="email"
                             value="<?php echo $result['UsuarioEmail'] ?>"
+                            oninput="verificarEmail()"
                         />
+                        <span id="erro-email"></span>
                     </div>
                 </div>
                 <div class="part-form">
@@ -257,37 +254,43 @@
                 <h5 class="text-left mb-4">Nova senha</h5>
                 <div class="part-form">
                     <div class="mb-3">
-                            <label for="password-atual" class="form-label">Senha Atual</label>
+                        <label for="password-atual" class="form-label">Senha Atual</label>
                         <input
                             type="password"
                             class="form-control"
                             id="password-atual"
                             name="password-atual"
+                            oninput="verficarSenhaAtual()"
                         />
+                        <span id="erro-password-atual"></span>
                     </div>
                     <div class="mb-3">
-                            <label for="password-nova" class="form-label">Nova Senha</label>
+                        <label for="password-nova" class="form-label">Nova Senha</label>
                         <input
                             type="password"
                             class="form-control"
                             id="password-nova"
                             name="password-nova"
+                            oninput="validarSenhas()"
                         />
+                        <span id="erro-password-nova"></span>
                     </div>
                     <div class="mb-3">
-                            <label for="password-nova-confirm" class="form-label">Confirmar Nova senha</label>
+                        <label for="password-nova-confirm" class="form-label">Confirmar Nova senha</label>
                         <input
                             type="password"
                             class="form-control"
                             id="password-nova-confirm"
                             name="password-nova-confirm"
+                            oninput="validarSenhas()"
                         />
+                        <span id="erro-password-nova-confirm"></span>
                     </div>
                 </div>
 
                 <div id="btns">
                     <a href="./usuarios.php" class="btn w-20" id="cancel">Cancelar</a>
-                    <button type="submit" class="btn btn-primary w-20" id="btn-edit">Editar</button>
+                    <button onclick="validarForm()" type="button"class="btn btn-primary w-20" id="btn-edit">Editar</button>
                 </div>
             </form>
         </div>

@@ -39,8 +39,40 @@
           
     }
 
-    $estadosOptions = getSelectOptions('SELECT EstadoUf AS id, EstadoNome AS nome FROM TbEstado');
-    $tipoClienteOptions = getSelectOptions('SELECT TipoClienteId AS id, TipoClienteNome AS nome FROM TbTipoCliente');
+    function getSelectCliente($sql) {
+        try {
+            require('C:\João\Projetos\EstoqueFacil\src\back-end\conexao.php');
+            $options = '';
+  
+            $stmt = $conexao->prepare($sql);
+            $stmt->execute();
+            $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();   
+  
+            if (empty($resultados)) {
+                $options .= '<option value="" disabled>Nenhum item encontrado</option>';
+            } else {
+                foreach ($resultados as $resultado) {
+                    $options .= '<option value="' . $resultado['id'] . '">' . $resultado['nome'] . " " .$resultado['sobrenome'] ?? null .'</option>';
+                }
+            }
+            
+            return $options;
+        } catch (Exception $e) {
+            error_log("Erro na função getSelectOptions: " . $e->getMessage());
+            echo '<script>
+                    alert("Ocorreu um erro inesperado. Tente novamente.");
+                    window.location.href = "../../front-end/html/home.php";
+                </script>';
+        }
+          
+    }
+
+    $tipoEntradaOptions = getSelectOptions("SELECT TipoEntradaId AS id, TipoEntradaNome AS nome FROM TbTipoEntrada WHERE TipoEntradaNome <> 'Fabricação'");
+    $produtosOptions = getSelectOptions("SELECT ProdutoId AS id, ProdutoNome AS nome FROM TbProduto");
+    $clienteOptions =  getSelectCliente("SELECT c.ClienteId AS id, COALESCE(cpf.ClienteNome, cnpj.ClienteRazaoSocial) AS nome,
+    COALESCE(cpf.ClienteSobrenome, '') AS sobrenome FROM TbCliente c LEFT JOIN TbClientePessoaFisica cpf ON c.ClienteId = cpf.ClienteId
+    LEFT JOIN TbClientePessoaJuridica cnpj ON c.ClienteId = cnpj.ClienteId;");
 
 ?>
 
@@ -53,9 +85,8 @@
     <title>Registrar Cliente</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../css/register-cliente.css" />
-    <script src="../js/register-cliente.js" defer></script>
-    <script src="../js/max-caracteres.js"></script>
+    <link rel="stylesheet" href="../css/register-saida.css" />
+    <script src="../js/register-entrada.js" defer></script>
     <script src="../js/msg.js"></script>
     <!-- Inclua o jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -66,6 +97,7 @@
             $('#cpf').mask('000.000.000-00'); // Máscara para o CEP
             $('#cnpj').mask('00.000.000/0000-00');
             $('#cep').mask('00000-000');
+            $('#preco').mask('000.000.000.000,00', {reverse: true});
         });
     </script>
 </head>
@@ -147,116 +179,75 @@
 
     <main>
         <div class="container my-5">
-            <h1 class="text-left mb-4">Registrar Cliente</h1>
-            <form action="../../back-end/processar-register-cliente.php" method="post" id="form-register-cliente">
-                <!-- Tópico Informações -->
-                <h4>Informações</h4>
+            <h1 class="text-left mb-4">Registrar Entrada</h1>
+            <form action="../../back-end/processar-register-entrada.php?tipo=E" method="post" id="form-register-entrada">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="tipoCliente" class="form-label">Tipo de Cliente</label>
-                        <select class="form-control" id="tipoCliente" name="tipoCliente" required>
-                            <?php echo $tipoClienteOptions; ?>
+                        <label for="tipo-entrada" class="form-label">Tipo de operação</label>
+                        <select class="form-select" role="button" id="tipo-entrada" name="tipo-entrada" required>
+                        <option value="" disabled selected>Selecione o Tipo de operação</option>
+                            <?php echo $tipoEntradaOptions; ?>
                         </select>
+                        <span class="erro-campo" id="erro-produto"></span>
+                    </div>
+                </div>
+                <!-- Tópico Cliente -->
+                <div>
+                    <h4 class="mt-4">Cliente</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cliente" class="form-label">Cliente/Fornecedor</label>
+                            <select class="form-select" role="button" id="cliente" name="cliente" required>
+                            <option value="" disabled selected>Selecione o cliente</option>
+                                <?php echo $clienteOptions; ?>
+                            </select>
+                            <span class="erro-campo" id="erro-cliente"></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tópico Informações -->
+                <h4 class="mt-4">Nota Fiscal</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nfe" class="form-label">Número da Nota</label>
+                        <input type="text" class="form-control" id="nfe" name="nfe" required/>
+                        <span class="erro-campo" id="erro-nfe"></span>
                     </div>
                     <div class="form-group">
-                        <label for="tipoPessoaCliente" class="form-label">Tipo de Cadastro</label>
-                        <select class="form-control" id="tipoPessoaCliente" name="tipoPessoaCliente" required onchange="mudarVerificacao()">
-                            <option value="F" selected>Pessoa Física</option>
-                            <option value="J">Pessoa Jurídica</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="clienteRazaoSocial" class="form-label">Razão Social</label>
-                        <input type="text" class="form-control" id="clienteRazaoSocial" name="clienteRazaoSocial" required />
-                        <span class="erro-campo" id="erro-razao"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="clienteNome" class="form-label">Nome</label>
-                        <input type="text" class="form-control" id="clienteNome" name="clienteNome" required />
-                        <span class="erro-campo" id="erro-nome"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="clienteSobrenome" class="form-label">Sobrenome</label>
-                        <input type="text" class="form-control" id="clienteSobrenome" name="clienteSobrenome" required />
-                        <span class="erro-campo" id="erro-sobrenome"></span>
+                        <label for="data-nfe" class="form-label">Data da Nota</label>
+                        <input type="datetime-local" class="form-control" id="data-nfe" name="data-nfe" required/>
+                        <span class="erro-campo" id="erro-data-nfe"></span>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="cpf" class="form-label">CPF</label>
-                        <input type="text" class="form-control" id="cpf" name="cpf" required oninput="verificarCPF()"/>
-                        <span class="erro-campo" id="erro-cpf"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="cnpj" class="form-label">CNPJ</label>
-                        <input type="text" class="form-control" id="cnpj" name="cnpj" oninput="verificarCNPJ()"/>
-                        <span class="erro-campo" id="erro-cnpj"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="clienteObser" class="form-label">Observação</label>
-                        <textarea class="form-control" id="clienteObser" name="clienteObser"></textarea>
+                        <label for="descricao" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="descricao" name="descricao" required oninput="limitarDescricao()"></textarea>
+                        <span class="erro-campo" id="erro-descricao"></span>
                         <small id="char-count" class="form-text text-muted"></small>
                     </div>
                 </div>
-
-                <!-- Tópico Endereço -->
-                <h4 class="mt-4">Endereço</h4>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="logradouro" class="form-label">Logradouro</label>
-                        <input type="text" class="form-control" id="logradouro" name="logradouro" required />
-                        <span class="erro-campo" id="erro-logradouro"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="numero" class="form-label">Número</label>
-                        <input type="text" class="form-control" id="numero" name="numero" required />
-                        <span class="erro-campo" id="erro-numero"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="complemento" class="form-label">Complemento</label>
-                        <input type="text" class="form-control" id="complemento" name="complemento" />
-                    </div>
-                    <div class="form-group">
-                        <label for="bairro" class="form-label">Bairro</label>
-                        <input type="text" class="form-control" id="bairro" name="bairro" />
-                        <span class="erro-campo" id="erro-bairro"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="cep" class="form-label">CEP</label>
-                        <input type="text" class="form-control" id="cep" name="cep" required />
-                        <span class="erro-campo" id="erro-cep"></span>
+                <!-- Tópico Produto -->
+                <div>
+                    <h4 class="mt-4">Produtos</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="produto" class="form-label">Produto</label>
+                            <select class="form-select" role="button" id="produto" name="produto" required>
+                            <option value="" disabled selected>Selecione o produto</option>
+                                <?php echo $produtosOptions; ?>
+                            </select>
+                            <span class="erro-campo" id="erro-produto"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="qtd-produto" class="form-label">Quantidade</label>
+                            <input type="number" class="form-control" id="qtd-produto" name="qtd-produto"/>
+                            <span class="erro-campo" id="erro-qtd-produto"></span>
+                        </div>
                     </div>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="estado" class="form-label">Estado</label>
-                        <select class="form-control" id="estado" name="estado" required onchange="buscarCidades()">
-                            <option value="">Selecione o Estado</option>
-                            <?php echo $estadosOptions; ?>
-                        </select>
-                        <span class="erro-campo" id="erro-estado"></span>
-                    </div>
-                    <div class="form-group" id="cidades">
-                        <label for="cidade" class="form-label">Cidade</label>
-                        <select class="form-control" id="cidade" name="cidade" required>
-                            <option value="">Selecione</option>
-                            <!-- Adicionar opções de cidade dinamicamente -->
-                        </select>
-                        <span class="erro-campo" id="erro-cidade"></span>
-                    </div>
-                </div>
-
-                <h4 class="mt-4">Contato</h4>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="email" class="form-label">E-mail</label>
-                        <input type="text" class="form-control" id="email" name="email" required oninput="validarEmail()"/>
-                        <span class="erro-campo" id="erro-email"></span>
-                    </div>
-                </div>
-
-                <button type="button" class="btn btn-primary mt-4" onclick="validarFormulario()">Registrar Cliente</button>
+                
+                <button type="submit" class="btn btn-primary mt-4" onclick="validarFormulario()">Registrar</button>
             </form>
         </div>
     </main>
@@ -266,15 +257,15 @@
     <?php
         if (isset($_GET['status']) && $_GET['status'] === 'falha') {
             echo '<div class="register-falha" id="register-falha">
-                    <p>Erro ao cadastrar cliente, tente novamente!</p>
+                    <p>Erro ao registrar entrada, tente novamente!</p>
                   </div>';
             echo '<script>fecharMensagem("register-falha");</script>';
         }
         if (isset($_GET['status']) && $_GET['status'] === 'sucesso') {
             echo  '<div class="register-ok" id="register-ok">
-                    <p>Cliente cadastrado com sucesso!</p>
+                    <p>Entrada registrada com sucesso!</p>
                     </div>';
-            echo  '<script>redirecionarParaClientes();</script>';
+            echo  '<script>redirecionarParaMovimentacoes();</script>';
         }
         if (isset($_GET['status']) && $_GET['status'] === 'falhaForm') {
             echo '<div class="register-falha" id="register-falha">

@@ -10,6 +10,29 @@ VALUES
 ('SC', 'Santa Catarina'),
 ('RS', 'Rio Grande do Sul');
 
+-- Inserindo Estados restantes
+INSERT INTO TbEstado (EstadoUf, EstadoNome)
+VALUES
+('AC', 'Acre'),
+('AL', 'Alagoas'),
+('AM', 'Amazonas'),
+('AP', 'Amapá'),
+('BA', 'Bahia'),
+('CE', 'Ceará'),
+('DF', 'Distrito Federal'),
+('GO', 'Goiás'),
+('MA', 'Maranhão'),
+('MT', 'Mato Grosso'),
+('PA', 'Pará'),
+('PB', 'Paraíba'),
+('PE', 'Pernambuco'),
+('PI', 'Piauí'),
+('RN', 'Rio Grande do Norte'),
+('RO', 'Rondônia'),
+('RR', 'Roraima'),
+('SE', 'Sergipe'),
+('TO', 'Tocantins');
+
 INSERT INTO TbCidade (CidadeNome, EstadoUf)
 VALUES
 ('São Paulo', 'SP'),
@@ -20,6 +43,29 @@ VALUES
 ('Curitiba', 'PR'),
 ('Florianópolis', 'SC'),
 ('Porto Alegre', 'RS');
+
+-- Inserindo Cidades restantes
+INSERT INTO TbCidade (CidadeNome, EstadoUf)
+VALUES
+('Rio Branco', 'AC'),
+('Maceió', 'AL'),
+('Manaus', 'AM'),
+('Macapá', 'AP'),
+('Salvador', 'BA'),
+('Fortaleza', 'CE'),
+('Brasília', 'DF'),
+('Goiânia', 'GO'),
+('São Luís', 'MA'),
+('Cuiabá', 'MT'),
+('Belém', 'PA'),
+('João Pessoa', 'PB'),
+('Recife', 'PE'),
+('Teresina', 'PI'),
+('Natal', 'RN'),
+('Porto Velho', 'RO'),
+('Boa Vista', 'RR'),
+('Aracaju', 'SE'),
+('Palmas', 'TO');
 
 INSERT INTO TbPermissao(PermissaoNome, PermissaoDescr)
 VALUES 
@@ -60,6 +106,14 @@ INSERT INTO TbCategoria (CategoriaNome, CategoriaDescr)
 VALUES 
 ('Instalação','Produtos que são utilizados na instalação'),
 ('Plásticos','Matéria prima responsável pela fabricação dos produtos');
+
+INSERT INTO TbCategoria (CategoriaNome, CategoriaDescr)
+VALUES 
+('Gases','Gases que são utilizados para fabricação');
+
+INSERT INTO TbCategoria (CategoriaNome, CategoriaDescr)
+VALUES 
+('Acessórios','Acessórios para os produtos finais');
 
 INSERT INTO TbTipoProduto (TipoProdutoNome, TipoProdutoDescr)
 VALUES 
@@ -121,3 +175,5 @@ EXEC SpMovimentacaoEstoque
     @EstoqueId = 1,
     @ProdutoId = 2,
     @Quantidade = 1
+
+SELECT * FROM TbMovimentacao

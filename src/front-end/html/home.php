@@ -1,16 +1,33 @@
-<?php
-session_start();
-require('../../back-end/verificar-logado.php');
+<?php 
+    session_start();
+    require('../../back-end/verificar-logado.php');
 
-if (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Administrador') {
-    $permissaoUsuario = 1;
-} elseif (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Estoquista') {
-    $permissaoUsuario = 2;
-} elseif (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Operador') {
-    $permissaoUsuario = 3;
-} else {
-    require('../../back-end/logout.php');
-}
+    if (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Administrador') {
+        $permissaoUsuario = 1;
+    }
+    elseif (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Estoquista') {
+        $permissaoUsuario = 2;
+    }
+    else {
+        require('../../back-end/logout.php');
+    }
+
+    try {
+        // Pegando os usuários cadastrados
+        require('C:\João\Projetos\EstoqueFacil\src\back-end\conexao.php');
+    
+        $stmt = $conexao->prepare('SELECT * FROM vwConsultarEstoque WHERE ProdEstoqueQuantidade <= 5');
+        $stmt->execute();
+
+    } catch (PDOException $e) {
+        error_log("Erro no banco: " . $e->getMessage());
+        header('Location: ../../front-end/html/home.php');
+        exit();
+    } catch (Exception $e) {
+        error_log("Erro ao registrar usuario: " . $e->getMessage());
+        header('Location: ../../front-end/html/home.php');
+        exit();
+    }
 ?>
 
 <!DOCTYPE html>
@@ -23,261 +40,130 @@ if (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Administ
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Link para o CSS externo -->
-    <link rel="stylesheet" href="../css/home.css" />
+    <link rel="stylesheet" href="../css/clientes.css" />
 </head>
 
 <body>
     <!-- Barra de navegação -->
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #3c4763;">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-            <img id="navbar-brand-img" src="../img/Estoque-Fácil.png" alt="Estoque Fácil" />
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img id="navbar-brand-img" src="../img/Estoque-Fácil.png" alt="Estoque Fácil" />
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <?php
-            echo '<div class="collapse navbar-collapse" id="navbarNav">';
-            echo '<ul class="navbar-nav ms-auto">';
+            <?php
+                echo '<div class="collapse navbar-collapse" id="navbarNav">';
+                echo '<ul class="navbar-nav ms-auto">';
 
-            // Home é exibido para todos os níveis de permissão
-            echo '<li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./home.php">Home</a>
-                </li>';
-
-            if ($permissaoUsuario == 1) {
-                // Menu para permissão total
-                echo '<li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="menuCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Cadastros
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="menuCadastros">
-                            <li><a class="dropdown-item" href="./usuarios.php">Usuários</a></li>
-                            <li><a class="dropdown-item" href="./cliente.html">Produtos</a></li>
-                            <li><a class="dropdown-item" href="./clientes.php">Clientes</a></li>
-                        </ul>
-                    </li>';
+                // Home é exibido para todos os níveis de permissão
                 echo '<li class="nav-item">
-                        <a class="nav-link" href="./cliente.html">Estoque</a>
-                    </li>
-                    <li class="nav-item">
-                        <div class="nav-link" onclick="entradasaida()">Movimentações</div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./cliente.html">Relatórios</a>
+                        <a class="nav-link active" aria-current="page" href="./home.php">Home</a>
                     </li>';
-            } elseif ($permissaoUsuario == 2) {
-                // Menu para permissão intermediária
-                echo '<li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="menuCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Cadastros
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="menuCadastros">
-                            <li><a class="dropdown-item" href="./clientes.php">Clientes</a></li>
-                            <li><a class="dropdown-item" href="./cliente.html">Produtos</a></li>
-                        </ul>
-                    </li>';
+
+                if ($permissaoUsuario == 1) {
+                    // Menu para permissão total
+                    echo '<li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="menuCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Cadastros
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="menuCadastros">
+                                <li><a class="dropdown-item" href="./usuarios.php">Usuários</a></li>
+                                <li><a class="dropdown-item" href="./produtos.php">Produtos</a></li>
+                                <li><a class="dropdown-item" href="./clientes.php">Clientes</a></li>
+                            </ul>
+                        </li>';
+                    echo '<li class="nav-item">
+                            <a class="nav-link" href="./estoque.php">Estoque</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./movimentacoes.php">Movimentações</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./cliente.html">Relatórios</a>
+                        </li>';
+                } elseif ($permissaoUsuario == 2) {
+                    // Menu para permissão intermediária
+                    echo '<li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="menuCadastros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Cadastros
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="menuCadastros">
+                                <li><a class="dropdown-item" href="./clientes.php">Clientes</a></li>
+                                <li><a class="dropdown-item" href="./produtos.php">Produtos</a></li>
+                            </ul>
+                        </li>';
+                    echo '<li class="nav-item">
+                            <a class="nav-link" href="./estoque.php">Estoque</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./movimentacoes.php">Movimentações</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./cliente.html">Relatórios</a>
+                        </li>';
+                }
+
+                // Sempre exibe a opção "Sair"
                 echo '<li class="nav-item">
-                        <a class="nav-link" href="./cliente.html">Estoque</a>
-                    </li>
-                    <li class="nav-item">
-                        <div class="nav-link" onclick="entradasaida()">Movimentações</div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./cliente.html">Relatórios</a>
+                        <a class="nav-link" href="../../back-end/logout.php">Sair</a>
                     </li>';
+
+                echo '</ul>';
+                echo '</div>';
+            ?>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container my-5">
+            <h1 class="text-left mb-4">Estoque Baixo</h1>
+            <!-- Barra de busca -->
+            
+            <?php
+            echo '<table class="table table-bordered table-striped" id="product-table">';
+            echo '<thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Produto</th>
+                        <th>Quantidade</th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>';
+            echo '<tbody id="product-list">';
+
+            // Executa a consulta na visão
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($result) {
+                // Exibe a primeira linha já capturada no fetch
+                do {
+                    // Pegando os dados retornados pela consulta
+                    $produtoId = htmlspecialchars($result['ProdutoId']);
+                    $produtoNome = htmlspecialchars($result['ProdutoNome']);
+                    $quantidade = htmlspecialchars($result['ProdEstoqueQuantidade']);
+
+                    // Exibindo os dados na tabela
+                    echo "<tr>
+                            <td>{$produtoId}</td>
+                            <td>{$produtoNome}</td>
+                            <td>{$quantidade}</td>
+                            <td><a href='./edit-produto.php?produtoId=".$produtoId."'>Editar</a></td>
+                        </tr>";
+                } while ($result = $stmt->fetch(PDO::FETCH_ASSOC)); // Continua pegando as próximas linhas
+                
+            } else {
+                // Caso não tenha resultados
+                echo '<tr>
+                        <td colspan="10" class="text-center">Nenhum Produto Encontrado</td>
+                    </tr>';
             }
-
-            // Sempre exibe a opção "Sair"
-            echo '<li class="nav-item">
-                    <a class="nav-link" href="../../back-end/logout.php">Sair</a>
-                </li>';
-
-            echo '</ul>';
-            echo '</div>';
+            echo '</tbody>';
+            echo '</table>';
         ?>
-    </div>
-</nav>
-
-
-    <!-- Conteúdo Principal -->
-    <div class="container my-5">
-        <h4 class="text-left mb-1">Olá <?php echo $_SESSION['UsuarioNome'] ?></h4>
-        <h5 class="text-left mb-4">Usuário <?php echo $_SESSION['PermissaoNome'] ?></h5>
-        <h1 class="text-left mb-4">Produtos</h1>
-
-
-        <!-- Barra de busca -->
-        <div class="row mb-4">
-            <!-- Campo de busca ocupando 8 colunas -->
-            <div class="col-md-10">
-                <input type="text" class="form-control" id="search-bar" placeholder="Buscar produto..." onkeyup="searchProduct()" />
-            </div>
-            <!-- Botão ocupando 4 colunas -->
-            <div class="col-md-2">
-                <button class="btn btn-primary w-100" onclick="addProduct()">Adicionar Produto</button>
-            </div>
         </div>
-
-
-
-        <!-- Tabela de produtos -->
-        <table class="table table-bordered table-striped" id="product-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome do Produto</th>
-                    <th>Tipo</th>
-                    <th>Categoria</th>
-                    <th>Matéria prima</th>
-                    <th>Quantidade</th>
-                    <th>Preço (R$)</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="product-list">
-                <!-- Produtos serão carregados via JS -->
-            </tbody>
-        </table>
-
-        <!-- Botão para adicionar novo produto -->
-
-    </div>
-
-    <!-- Modal de Adição de Produto -->
-    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="productModalLabel">
-                        Adicionar Novo Produto
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-
-                <div class="modal-body">
-                    <form id="product-form">
-                        <div class="mb-3">
-                            <label for="product-name" class="form-label">Nome do Produto</label>
-                            <input type="text" class="form-control" id="product-name" required />
-                        </div>
-                        <div class="mb-3">
-                            <label for="product-type" class="form-label">Tipo do Produto</label>
-                            <input type="text" class="form-control" id="product-type" required />
-                        </div>
-                        <div class="mb-3">
-                            <label for="product-category" class="form-label">Categoria do Produto</label>
-                            <input type="text" class="form-control" id="product-category" required />
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="product-matter" class="form-label">Matéria prima do Produto</label>
-                            <input type="text" class="form-control" id="product-matter" required />
-                        </div>
-                        <div class="mb-3">
-                            <label for="product-quantity" class="form-label">Quantidade</label>
-                            <input type="number" class="form-control" id="product-quantity" required />
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="product-price" class="form-label">Preço (R$)</label>
-                            <input type="number" class="form-control" id="product-price" step="0.01" required />
-                        </div>
-                        <button type="submit" class="btn btn-primary">Salvar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Modal de Entrada/Saída -->
-    <div class="modal fade" id="entradaSaidaModal" tabindex="-1" aria-labelledby="entradaSaidaModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="entradaSaidaModalLabel">Registrar Entrada/Saída</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="entrada-saida-form">
-                        <!-- Tipo de Operação (Entrada ou Saída) -->
-                        <div class="mb-3">
-                            <label for="tipo_operacao" class="form-label">Tipo de Operação:</label>
-                            <select class="form-select" id="tipo_operacao" name="tipo_operacao" onchange="mostrarCamposEntradaSaida()">
-                                <option value=""></option>
-                                <option value="entrada">Entrada</option>
-                                <option value="saida">Saída</option>
-                            </select>
-                        </div>
-
-                        <!-- Tipo de Entrada (Fornecimento ou Fabricação) - Somente para Entrada -->
-                        <div id="campo_tipo_entrada" class="mb-3" style="display: none;">
-                            <label for="tipo_entrada" class="form-label">Tipo de Entrada:</label>
-                            <select class="form-select" id="tipo_entrada" name="tipo_entrada" onchange="mostrarCamposEspecificosEntrada()">
-                                <option value="fornecimento">Fornecimento</option>
-                                <option value="fabricacao">Fabricação</option>
-                            </select>
-                        </div>
-
-                        <!-- Nota Fiscal (Somente para Saída e Fornecimento) -->
-                        <div id="campo_nota_fiscal" class="mb-3" style="display: none;">
-                            <label for="nota_fiscal" class="form-label">Nota Fiscal:</label>
-                            <input type="text" class="form-control" id="nota_fiscal" name="nota_fiscal">
-                        </div>
-
-                        <!-- Cliente (Somente para Saída e Fabricação) -->
-                        <div id="campo_cliente" class="mb-3" style="display: none;">
-                            <label for="cliente" class="form-label">Cliente:</label>
-                            <input type="text" class="form-control" id="cliente" name="cliente">
-                        </div>
-
-                        <!-- Turno (Somente para Fabricação) -->
-                        <div id="campo_turno" class="mb-3" style="display: none;">
-                            <label for="turno" class="form-label">Turno:</label>
-                            <input type="text" class="form-control" id="turno" name="turno">
-                        </div>
-
-                        <!-- Campo específico para Entrada (Matéria Prima) -->
-                        <div id="campo_materia_prima" class="mb-3" style="display: none;">
-                            <label for="materia_prima" class="form-label">Matéria Prima:</label>
-                            <input type="text" class="form-control" id="materia_prima" name="materia_prima">
-                        </div>
-
-                        <!-- Produto (para ambos) -->
-                        <div class="mb-3">
-                            <label for="produto" class="form-label">Produto:</label>
-                            <input type="text" class="form-control" id="produto" name="produto" required>
-                        </div>
-
-                        <!-- Quantidade (para ambos) -->
-                        <div class="mb-3">
-                            <label for="quantidade" class="form-label">Quantidade:</label>
-                            <input type="number" class="form-control" id="quantidade" name="quantidade" required>
-                        </div>
-
-                        <!-- Responsável (para ambos) -->
-                        <div id="campo_responsavel" class="mb-3">
-                            <label for="responsavel" class="form-label">Responsável:</label>
-                            <input type="text" class="form-control" id="responsavel" name="responsavel" required>
-                        </div>
-
-                        <!-- Data (para ambos) -->
-                        <div class="mb-3">
-                            <label for="data_operacao" class="form-label">Data:</label>
-                            <input type="date" class="form-control" id="data_operacao" name="data_operacao" required>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">Registrar Operação</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS e JS Externo -->
+    </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- <script src="./script/script.js"></script> -->
 </body>

@@ -49,15 +49,14 @@
             if (usuarioId !== '') {
                 var xhr = new XMLHttpRequest(); // Cria o objeto XMLHttpRequest
                 var url = './src/back-end/buscar-usuario.php?UsuarioId=' + usuarioId; // URL da requisição
-                console.log("Requisição para: " + url); // Log para depuração
 
                 xhr.open('GET', url, true); // Faz a requisição GET
                 xhr.onload = function() {
                     if (xhr.status == 200) {
                         var usuarioNome = xhr.responseText; // Resposta do servidor (nome do usuário)
-                        console.log("Nome retornado: " + usuarioNome); // Log para depuração
                         document.getElementById("username").value = usuarioNome; // Preenche o campo 'username'
                     } else {
+                        document.getElementById("username").value = '';
                         console.error("Erro na requisição: " + xhr.status); // Log de erro
                     }
                 };

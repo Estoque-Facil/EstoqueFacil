@@ -24,6 +24,14 @@ main {
     background-color: #ffffff;
 }
 
+#componentes {
+    display: none;
+}
+
+#id-comp, #qtd-comp {
+    display: none;
+}
+
 .form-row {
     display: flex;
     flex-wrap: wrap;

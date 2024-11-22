@@ -1,0 +1,86 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+h1, h4, h5{
+    color: #3c4763;
+}
+
+.navbar-brand, .nav-link {
+    color: #ffffff !important;
+    
+}
+
+#navbar-brand-img{
+    width: 15%;
+    border-radius: 5px;
+}
+
+.nav-item{
+    cursor: pointer;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table th {
+    background-color: #3c4763;
+    color: white;
+}
+
+.btn-primary {
+    background-color: #3c4763;
+    border-color: #3c4763;
+}
+
+.btn-primary:hover {
+    background-color: #2e364d;
+    border-color: #2e364d;
+}
+
+#search-bar {
+    width: 100%;
+    border: 2px solid #3c4763;
+}
+
+.col-md-6{
+    display: flex;
+    gap: 5%;
+    width: 50%;
+}
+
+#movimentacoes {
+    width: 40%;
+}
+
+#mov-fabricacao {
+    display: none;
+}
+
+.nova-mov {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    gap: 5%;
+    position: absolute;
+    top: 5%;
+    left: 35%;
+    background-color: white;
+    border: 2px solid #3c4763;
+    border-radius: 5px;
+    padding: 30px;
+    z-index: 1001;
+}

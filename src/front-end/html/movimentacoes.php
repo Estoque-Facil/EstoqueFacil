@@ -4,11 +4,11 @@
 
     if (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Administrador') {
         $permissaoUsuario = 1;
-    }
-    elseif (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Estoquista') {
+    } elseif (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Estoquista') {
         $permissaoUsuario = 2;
-    }
-    else {
+    } elseif (isset($_SESSION['PermissaoNome']) && $_SESSION['PermissaoNome'] == 'Operador') {
+        $permissaoUsuario = 3;
+    } else {
         require('../../back-end/logout.php');
     }
 
@@ -16,7 +16,7 @@
         // Pegando os usuários cadastrados
         require('C:\João\Projetos\EstoqueFacil\src\back-end\conexao.php');
     
-        $stmt = $conexao->prepare('SELECT * FROM VwConsultarClientesBasico');
+        $stmt = $conexao->prepare('SELECT * FROM vwConsultarProdutos');
         $stmt->execute();
 
     } catch (PDOException $e) {
@@ -39,11 +39,14 @@
     <title>Estoque fácil</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <!-- Link para o CSS externo -->
-    <link rel="stylesheet" href="../css/clientes.css" />
+    <link rel="stylesheet" href="../css/movimentacoes.css" />
+    <script src="../js/movimentacoes.js" defer></script>
 </head>
 
 <body>
+    <div id="overlay" class="overlay"></div>
     <!-- Barra de navegação -->
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #3c4763;">
         <div class="container-fluid">
@@ -79,7 +82,7 @@
                             <a class="nav-link" href="./cliente.html">Estoque</a>
                         </li>
                         <li class="nav-item">
-                            <div class="nav-link" onclick="entradasaida()">Movimentações</div>
+                            <a class="nav-link" href="./movimentacoes.php">Movimentações</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="./cliente.html">Relatórios</a>
@@ -99,13 +102,22 @@
                             <a class="nav-link" href="./cliente.html">Estoque</a>
                         </li>
                         <li class="nav-item">
-                            <div class="nav-link" onclick="entradasaida()">Movimentações</div>
+                            <a class="nav-link" href="./movimentacoes.php">Movimentações</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./cliente.html">Relatórios</a>
+                        </li>';
+                } elseif ($permissaoUsuario == 3) {
+                    echo '<li class="nav-item">
+                            <a class="nav-link" href="./cliente.html">Estoque</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="./movimentacoes.php">Movimentações</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="./cliente.html">Relatórios</a>
                         </li>';
                 }
-
                 // Sempre exibe a opção "Sair"
                 echo '<li class="nav-item">
                         <a class="nav-link" href="../../back-end/logout.php">Sair</a>
@@ -119,74 +131,61 @@
 
     <main>
         <div class="container my-5">
-            <h1 class="text-left mb-4">Clientes</h1>
+            <h1 class="text-left mb-4">Movimentações</h1>
             <!-- Barra de busca -->
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <input type="text" class="form-control" id="search-bar" placeholder="Buscar clientes..."
+                    <input type="text" class="form-control" id="search-bar" placeholder="Buscar movimentações..."
                         onkeyup="searchProduct()" />
+                    <select class="form-select" id="movimentacoes" name="movimentacoes" role="button" onchange="consultarMovimentacoes()" required>
+                        <option value="S" selected>Saídas</option>
+                        <option value="E">Entradas</option>
+                        <option value="F">Fabricação</option>
+                    </select>
                     <button class="btn btn-primary" id="btn-pesquisar"> Pesquisar </button>
-                    <a href="./register-cliente.php" class="btn btn-primary">Novo</a>
+                    <button class="btn btn-primary" id="btn btn-novo" onclick="criarMovimentacao()"> Novo</button>
+                    <div id="tipo-mov" class="nova-mov"></div>
+                    <div id="tipo-e" class="nova-mov"></div>
+                    <div id="tipo-s" class="nova-mov"></div>
                 </div>
             </div>
             
-            <?php
-                echo '<table class="table table-bordered table-striped" id="product-table">';
-                echo '<thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Tipo</th>
-                            <th>Razão Social/Nome Sobrenome</th>
-                            <th>CPF/CNPJ</th>
-                            <th>Cidade</th>
-                            <th>UF</th>
-                            <th>Status</th>
-                            <th>Data</th>
-                            <th>Editar</th>
-                        </tr>
-                    </thead>';
-                echo '<tbody id="product-list">';
-
-                // Verifica se há resultados na consulta
-                $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                if ($result) {
-                    // Exibe a primeira linha já capturada no fetch
-                    do {
-                        // Pegando os dados retornados pela consulta
-                        $clienteId = htmlspecialchars($result['ClienteId']);
-                        $tipoClienteNome = htmlspecialchars($result['TipoClienteNome']);
-                        $tipoPessoaCliente = htmlspecialchars($result['TipoPessoaCliente']);
-                        $campoRazaoNome = $tipoPessoaCliente == 'J' ? htmlspecialchars($result['ClienteRazaoSocial']) : htmlspecialchars($result['ClienteNome'])." ".htmlspecialchars($result['ClienteSobrenome']);
-                        $campoCpfCnpj = $tipoPessoaCliente == 'J' ? htmlspecialchars(preg_replace('/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/', '$1.$2.$3/$4-$5', $result['ClienteCnpj'])) : htmlspecialchars(preg_replace('/(\d{3})(\d{3})(\d{3})(\d{2})/', '$1.$2.$3-$4', $result['ClienteCpf']));
-                        $cidade = htmlspecialchars($result['CidadeNome']);
-                        $uf = htmlspecialchars($result['EstadoUf']);
-                        $clienteStatus = $result['ClienteStatus'] == 1 ? 'Ativo' : 'Inativo';
-                        $clienteData = date('d/m/Y', strtotime($result['ClienteData']));
-                    
-                        // Exibindo os dados na tabela
-                        echo "<tr>
-                                <td>{$clienteId}</td>
-                                <td>{$tipoClienteNome}</td>
-                                <td>{$campoRazaoNome}</td>
-                                <td>{$campoCpfCnpj}</td>
-                                <td>{$cidade}</td>
-                                <td>{$uf}</td>
-                                <td>{$clienteStatus}</td>
-                                <td>{$clienteData}</td>
-                                <td><a href='./edit-cliente.php?clienteId=".$clienteId."'>Editar</a></td>
-                            </tr>";
-                    } while ($result = $stmt->fetch(PDO::FETCH_ASSOC)); // Continua pegando as próximas linhas
-                    
-                } else {
-                    // Caso não tenha resultados
-                    echo '<tr>
-                            <td colspan="11" class="text-center">Nenhum Cliente Encontrado</td>
-                          </tr>';
-                }
-                echo '</tbody>';
-                echo '</table>';
-                ?>
-
+            <table class="table table-bordered table-striped" id="mov-padrao" class="mov-table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Data</th>
+                        <th>Tipo</th>
+                        <th>Cliente Nome/Razao</th>
+                        <th>CPF/CNPJ</th>
+                        <th>NFE</th>
+                        <th>Data NFE</th>
+                        <th>Produto</th>
+                        <th>Quantidade</th>
+                        <th>Usuario</th>
+                        <th>Ver mais</th>
+                    </tr>
+                </thead>
+                <tbody id="mov-table-body"> 
+                </tbody>
+            </table>
+            <table class="table table-bordered table-striped" id="mov-fabricacao" class="mov-table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Data</th>
+                        <th>Tipo</th>
+                        <th>E/S</th>
+                        <th>Código E/S</th>
+                        <th>Produto</th>
+                        <th>Quantidade</th>
+                        <th>Usuario</th>
+                        <th>Ver mais</th>
+                    </tr>
+                </thead>
+                <tbody id="mov-table-body"> 
+                </tbody>
+            </table>
         </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

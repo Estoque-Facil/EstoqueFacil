@@ -97,3 +97,8 @@ select {
     background-color: #dc3545;
     color: white;
 }
+
+span {
+    font-size: 14px;
+    color: red;
+}
